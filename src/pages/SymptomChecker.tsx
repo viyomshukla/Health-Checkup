@@ -1,86 +1,61 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle, Loader2, X, Info } from "lucide-react";
 import { toast } from "sonner";
+import { symptomsList } from "@/data/symptoms";
 
 interface PredictionResult {
-  condition: string;
+  disease: string;
   confidence: number;
-  recommendations: string[];
+  description: string;
+  recommendations: string;
 }
 
 const SymptomChecker = () => {
-  const [symptoms, setSymptoms] = useState({
-    symptom1: "",
-    symptom2: "",
-    symptom3: "",
-    symptom4: "",
-    symptom5: "",
-  });
-  
+  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<PredictionResult | null>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setSymptoms(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+  const filteredSymptoms = symptomsList.filter(symptom =>
+    symptom.label.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    !selectedSymptoms.includes(symptom.value)
+  );
+
+  const handleAddSymptom = (symptomValue: string) => {
+    if (selectedSymptoms.length < 5) {
+      setSelectedSymptoms([...selectedSymptoms, symptomValue]);
+      setSearchQuery("");
+      setShowDropdown(false);
+    } else {
+      toast.error("Maximum 5 symptoms allowed");
+    }
+  };
+
+  const handleRemoveSymptom = (symptomValue: string) => {
+    setSelectedSymptoms(selectedSymptoms.filter(s => s !== symptomValue));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate that at least one symptom is filled
-    const filledSymptoms = Object.values(symptoms).filter(s => s.trim() !== "");
-    if (filledSymptoms.length === 0) {
-      toast.error("Please enter at least one symptom");
+    if (selectedSymptoms.length === 0) {
+      toast.error("Please select at least one symptom");
       return;
     }
 
     setIsLoading(true);
     
-    // Simulate API call to Flask backend
-    // In production, replace this with actual fetch to your Flask endpoint
     try {
-      // Simulated backend response
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock prediction logic based on symptoms
-      const mockConditions = [
-        { condition: "Common Cold", confidence: 85 },
-        { condition: "Seasonal Allergies", confidence: 78 },
-        { condition: "Influenza", confidence: 72 },
-        { condition: "Migraine", confidence: 68 },
-        { condition: "Arthritis", confidence: 65 },
-      ];
-      
-      const randomCondition = mockConditions[Math.floor(Math.random() * mockConditions.length)];
-      
-      const mockResult: PredictionResult = {
-        condition: randomCondition.condition,
-        confidence: randomCondition.confidence,
-        recommendations: [
-          "Schedule an appointment with your primary care physician",
-          "Keep track of your symptoms over the next 48 hours",
-          "Stay hydrated and get adequate rest",
-          "Consider over-the-counter pain relief if needed",
-        ],
-      };
-      
-      setResult(mockResult);
-      toast.success("Analysis complete!");
-      
-      /* 
-      // Actual implementation for Flask backend:
+      // Connect to Flask backend running on localhost:5000
       const response = await fetch('http://localhost:5000/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(symptoms),
+        body: JSON.stringify({ symptoms: selectedSymptoms }),
       });
       
       if (!response.ok) {
@@ -89,24 +64,29 @@ const SymptomChecker = () => {
       
       const data = await response.json();
       setResult(data);
-      */
+      toast.success("Analysis complete!");
+      
     } catch (error) {
-      toast.error("Failed to analyze symptoms. Please try again.");
+      // If Flask backend is not running, show error message with instructions
+      toast.error("Cannot connect to Flask backend. Please ensure your Flask server is running on port 5000.");
       console.error("Error:", error);
+      
+      // Show instructions in result area
+      setResult({
+        disease: "Backend Not Connected",
+        confidence: 0,
+        description: "The Flask backend server is not running. To use this feature:",
+        recommendations: "1. Open a terminal in the project directory\n2. Install Flask dependencies: pip install flask flask-cors scikit-learn pandas numpy\n3. Run: python public/backend/app.py\n4. The server will start on http://localhost:5000\n5. Try the symptom checker again"
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
   const clearForm = () => {
-    setSymptoms({
-      symptom1: "",
-      symptom2: "",
-      symptom3: "",
-      symptom4: "",
-      symptom5: "",
-    });
+    setSelectedSymptoms([]);
     setResult(null);
+    setSearchQuery("");
   };
 
   return (
@@ -114,7 +94,7 @@ const SymptomChecker = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-8 text-foreground">
-            Symptom Checker
+            AI-Powered Symptom Checker
           </h1>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -122,142 +102,214 @@ const SymptomChecker = () => {
             <div className="animate-fadeIn">
               <Card className="healthcare-card">
                 <h2 className="text-2xl font-semibold mb-6 text-foreground">
-                  Enter Your Symptoms
+                  Select Your Symptoms
                 </h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <div key={num}>
-                      <label
-                        htmlFor={`symptom${num}`}
-                        className="block text-sm font-medium mb-2 text-foreground"
-                      >
-                        Symptom {num}
-                      </label>
-                      <input
-                        type="text"
-                        id={`symptom${num}`}
-                        name={`symptom${num}`}
-                        value={symptoms[`symptom${num}` as keyof typeof symptoms]}
-                        onChange={handleInputChange}
-                        className="healthcare-input"
-                        placeholder={`Enter symptom ${num} (e.g., headache, fever, fatigue)`}
-                      />
-                    </div>
-                  ))}
-                  
-                  <div className="flex gap-4 pt-4">
-                    <Button
-                      type="submit"
-                      disabled={isLoading}
-                      className="btn-healthcare flex-1"
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Analyzing...
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="mr-2 h-4 w-4" />
-                          Check Symptoms
-                        </>
-                      )}
-                    </Button>
+                
+                <div className="mb-6">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        setShowDropdown(true);
+                      }}
+                      onFocus={() => setShowDropdown(true)}
+                      placeholder="Search and select symptoms..."
+                      className="healthcare-input pr-10"
+                      disabled={selectedSymptoms.length >= 5}
+                    />
+                    <Info className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     
-                    <Button
-                      type="button"
-                      onClick={clearForm}
-                      variant="outline"
-                      className="flex-1"
-                    >
-                      Clear
-                    </Button>
+                    {showDropdown && searchQuery && (
+                      <div className="absolute z-10 w-full mt-1 bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        {filteredSymptoms.length > 0 ? (
+                          filteredSymptoms.slice(0, 10).map(symptom => (
+                            <button
+                              key={symptom.value}
+                              type="button"
+                              onClick={() => handleAddSymptom(symptom.value)}
+                              className="w-full px-4 py-2 text-left hover:bg-secondary transition-colors text-sm"
+                            >
+                              {symptom.label}
+                            </button>
+                          ))
+                        ) : (
+                          <div className="px-4 py-2 text-muted-foreground text-sm">
+                            No matching symptoms found
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </form>
+                  
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Select up to 5 symptoms ({selectedSymptoms.length}/5 selected)
+                  </p>
+                </div>
+
+                {/* Selected Symptoms */}
+                <div className="mb-6">
+                  <h3 className="text-sm font-medium mb-3 text-foreground">Selected Symptoms:</h3>
+                  {selectedSymptoms.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {selectedSymptoms.map(symptom => {
+                        const symptomLabel = symptomsList.find(s => s.value === symptom)?.label || symptom;
+                        return (
+                          <div
+                            key={symptom}
+                            className="bg-primary/10 text-primary px-3 py-1 rounded-full flex items-center gap-2 text-sm"
+                          >
+                            <span>{symptomLabel}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveSymptom(symptom)}
+                              className="hover:text-destructive transition-colors"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground text-sm">No symptoms selected yet</p>
+                  )}
+                </div>
+                
+                <div className="flex gap-4">
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isLoading || selectedSymptoms.length === 0}
+                    className="btn-healthcare flex-1"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        Analyze Symptoms
+                      </>
+                    )}
+                  </Button>
+                  
+                  <Button
+                    type="button"
+                    onClick={clearForm}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    Clear All
+                  </Button>
+                </div>
+
+                {/* Backend Status Info */}
+                <div className="mt-6 p-4 bg-secondary rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <Info className="h-5 w-5 text-primary mt-0.5" />
+                    <div className="text-sm">
+                      <p className="font-medium text-foreground mb-1">Flask Backend Required</p>
+                      <p className="text-muted-foreground">
+                        This symptom checker connects to a Flask ML backend. 
+                        Ensure your Flask server is running on port 5000.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </Card>
             </div>
 
             {/* Results Section */}
             <div className={`${result ? 'animate-slideIn' : ''}`}>
               {result ? (
-                <Card className="healthcare-card border-primary/20">
+                <Card className={`healthcare-card ${result.disease === "Backend Not Connected" ? 'border-warning' : 'border-primary/20'}`}>
                   <div className="flex items-start space-x-3 mb-6">
-                    <div className="bg-primary/10 rounded-full p-2">
-                      <AlertCircle className="h-6 w-6 text-primary" />
+                    <div className={`${result.disease === "Backend Not Connected" ? 'bg-warning/10' : 'bg-primary/10'} rounded-full p-2`}>
+                      <AlertCircle className={`h-6 w-6 ${result.disease === "Backend Not Connected" ? 'text-warning' : 'text-primary'}`} />
                     </div>
                     <div className="flex-1">
                       <h2 className="text-2xl font-semibold text-foreground">
-                        Analysis Results
+                        {result.disease === "Backend Not Connected" ? "Setup Required" : "Analysis Results"}
                       </h2>
                       <p className="text-muted-foreground mt-1">
-                        Based on your symptoms
+                        {result.disease === "Backend Not Connected" ? "Follow these steps to connect" : "Based on your symptoms"}
                       </p>
                     </div>
                   </div>
                   
                   <div className="space-y-6">
-                    <div className="bg-primary/5 rounded-lg p-4">
-                      <p className="text-lg font-medium text-foreground mb-2">
-                        Possible Condition:
-                      </p>
-                      <p className="text-2xl font-bold text-primary">
-                        {result.condition}
-                      </p>
-                      <div className="mt-3">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm text-muted-foreground">
-                            Confidence Level
-                          </span>
-                          <span className="text-sm font-medium text-foreground">
-                            {result.confidence}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-secondary rounded-full h-2">
-                          <div
-                            className="bg-primary h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${result.confidence}%` }}
-                          />
+                    {result.disease !== "Backend Not Connected" && (
+                      <div className="bg-primary/5 rounded-lg p-4">
+                        <p className="text-lg font-medium text-foreground mb-2">
+                          Predicted Condition:
+                        </p>
+                        <p className="text-2xl font-bold text-primary">
+                          {result.disease}
+                        </p>
+                        <div className="mt-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-sm text-muted-foreground">
+                              Confidence Level
+                            </span>
+                            <span className="text-sm font-medium text-foreground">
+                              {result.confidence}%
+                            </span>
+                          </div>
+                          <div className="w-full bg-secondary rounded-full h-2">
+                            <div
+                              className="bg-primary h-2 rounded-full transition-all duration-500"
+                              style={{ width: `${result.confidence}%` }}
+                            />
+                          </div>
                         </div>
                       </div>
+                    )}
+                    
+                    <div>
+                      <h3 className="text-lg font-semibold mb-3 text-foreground">
+                        {result.disease === "Backend Not Connected" ? "Setup Instructions:" : "Description:"}
+                      </h3>
+                      <p className="text-muted-foreground">{result.description}</p>
                     </div>
                     
                     <div>
                       <h3 className="text-lg font-semibold mb-3 text-foreground">
-                        Recommendations:
+                        {result.disease === "Backend Not Connected" ? "Steps to Connect:" : "Recommendations:"}
                       </h3>
-                      <ul className="space-y-2">
-                        {result.recommendations.map((rec, index) => (
-                          <li
-                            key={index}
-                            className="flex items-start space-x-2"
-                          >
+                      <div className="space-y-2">
+                        {result.recommendations.split('\n').map((rec, index) => (
+                          <div key={index} className="flex items-start gap-2">
                             <CheckCircle className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
                             <span className="text-muted-foreground">{rec}</span>
-                          </li>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                     
-                    <div className="bg-warning-light border border-warning/20 rounded-lg p-4">
-                      <p className="text-sm text-healthcare-dark">
-                        <strong>Disclaimer:</strong> This is a preliminary analysis based on the symptoms provided. 
-                        It is not a substitute for professional medical advice, diagnosis, or treatment. 
-                        Please consult with a qualified healthcare provider for accurate diagnosis.
-                      </p>
-                    </div>
+                    {result.disease !== "Backend Not Connected" && (
+                      <div className="bg-warning-light border border-warning/20 rounded-lg p-4">
+                        <p className="text-sm text-healthcare-dark">
+                          <strong>Medical Disclaimer:</strong> This is an AI-based preliminary analysis. 
+                          Always consult with a qualified healthcare provider for accurate diagnosis and treatment.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </Card>
               ) : (
-                <Card className="healthcare-card h-full flex items-center justify-center min-h-[400px]">
+                <Card className="healthcare-card h-full flex items-center justify-center min-h-[500px]">
                   <div className="text-center">
                     <div className="bg-secondary rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
                       <AlertCircle className="h-10 w-10 text-muted-foreground" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2 text-foreground">
-                      No Analysis Yet
+                      Ready for Analysis
                     </h3>
                     <p className="text-muted-foreground max-w-sm">
-                      Enter your symptoms in the form and click "Check Symptoms" to receive a health analysis
+                      Select your symptoms from the list and click "Analyze Symptoms" to receive an AI-powered health prediction
                     </p>
                   </div>
                 </Card>
