@@ -1,4 +1,4 @@
-# Prattek
+
 
 A web application for symptom checking and finding doctors, built with React (frontend) and Flask (backend).
 
