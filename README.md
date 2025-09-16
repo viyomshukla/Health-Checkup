@@ -1,73 +1,82 @@
-# Welcome to your Lovable project
+# Prattek
 
-## Project info
+A web application for symptom checking and finding doctors, built with React (frontend) and Flask (backend).
 
-**URL**: https://lovable.dev/projects/293bceb7-be75-46e1-b3ff-ec1f97683be3
+## Features
 
-## How can I edit this code?
+- Symptom Checker: Enter symptoms and get predictions.
+- Find Doctor: Search for doctors.
+- Modern UI with navigation and tooltips.
 
-There are several ways of editing your application.
+## Folder Structure
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/293bceb7-be75-46e1-b3ff-ec1f97683be3) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+Prattek/
+├── public/
+│   └── backend/
+│       └── app.py
+├── src/
+│   ├── App.tsx
+│   ├── components/
+│   └── pages/
+├── data/
+│   └── Training.csv
+├── package.json
+└── README.md
 ```
 
-**Edit a file directly in GitHub**
+## Getting Started
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### 1. Clone the repository
 
-**Use GitHub Codespaces**
+```sh
+git clone <your-repo-url>
+cd Prattek
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 2. Install Frontend Dependencies
 
-## What technologies are used for this project?
+```sh
+npm install
+```
 
-This project is built with:
+### 3. Start the Frontend
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```sh
+npm run dev
+```
+Visit [http://localhost:5173](http://localhost:5173) in your browser.
 
-## How can I deploy this project?
+### 4. Install Backend Dependencies
 
-Simply open [Lovable](https://lovable.dev/projects/293bceb7-be75-46e1-b3ff-ec1f97683be3) and click on Share -> Publish.
+```sh
+pip install flask flask-cors scikit-learn pandas numpy
+```
 
-## Can I connect a custom domain to my Lovable project?
+### 5. Prepare Data
 
-Yes, you can!
+Place `Training.csv` inside the `data` folder:
+```
+Prattek/data/Training.csv
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### 6. Start the Backend
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```sh
+python public/backend/app.py
+```
+Backend runs at [http://localhost:5000](http://localhost:5000).
+
+## Usage
+
+- Use the navigation bar to access Symptom Checker and Find Doctor.
+- The frontend communicates with the backend via API calls.
+
+## Troubleshooting
+
+- **FileNotFoundError:** Ensure `Training.csv` exists in the `data` folder.
+- **Port Issues:** Make sure ports 5173 (frontend) and 5000 (backend) are free.
+
+## License
+
+MIT
