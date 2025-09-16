@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 
 # ---- load & train ----
-data = pd.read_csv(os.path.join("templates", "Training.csv"))
+data = pd.read_csv("Training.csv")
 df = pd.DataFrame(data)
 feature_cols = df.columns[:-1]
 X = df[feature_cols]
@@ -55,6 +55,7 @@ def predict_from_symptoms(symptom_list):
         "description": description,
         "recommendations": recommendations
     }
+
 
 @app.route("/predict", methods=["POST"])
 def predict():

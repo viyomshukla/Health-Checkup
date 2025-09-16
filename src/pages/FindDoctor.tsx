@@ -10,84 +10,82 @@ interface Doctor {
   rating: number;
   experience: string;
   location: string;
-  distance: string;
   phone: string;
   availability: string;
-  image: string;
+  // image: string;
 }
 
 const doctors: Doctor[] = [
   {
     id: 1,
-    name: "Dr. Sarah Johnson",
+    name: "Dr. Nitin Gupta",
     specialty: "General Physician",
     rating: 4.8,
     experience: "15 years",
-    location: "Downtown Medical Center",
-    distance: "2.3 miles",
-    phone: "(555) 123-4567",
+    location: "Fortis Hospital Noida Sector 62",
+   
+    phone: "+91 6722999991",
     availability: "Available Today",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
+    // image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
   },
   {
     id: 2,
-    name: "Dr. Michael Chen",
+    name: "Dr. Bhawna Jain",
     specialty: "Cardiologist",
     rating: 4.9,
     experience: "20 years",
     location: "Heart Care Institute",
-    distance: "3.5 miles",
-    phone: "(555) 234-5678",
+    phone: "91 6722999991",
     availability: "Next Available: Tomorrow",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael",
+    // image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael",
   },
   {
     id: 3,
-    name: "Dr. Emily Rodriguez",
+    name: "Dr. Yash Mehta",
     specialty: "Pediatrician",
     rating: 4.7,
     experience: "12 years",
     location: "Children's Health Clinic",
-    distance: "1.8 miles",
-    phone: "(555) 345-6789",
+   
+    phone: "+91 9874546123",
     availability: "Available Today",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily",
+    // image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily",
   },
   {
     id: 4,
-    name: "Dr. James Wilson",
+    name: "Dr. krishna Yadav",
     specialty: "Orthopedic Surgeon",
     rating: 4.6,
     experience: "18 years",
     location: "Bone & Joint Center",
-    distance: "4.2 miles",
-    phone: "(555) 456-7890",
+   
+    phone: "+91 8765432109",
     availability: "Next Available: This Week",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=James",
+    // image: "https://api.dicebear.com/7.x/avataaars/svg?seed=James",
   },
   {
     id: 5,
-    name: "Dr. Lisa Thompson",
+    name: "Dr.Urvashi Sharma",
     specialty: "Dermatologist",
     rating: 4.8,
     experience: "10 years",
     location: "Skin Health Clinic",
-    distance: "2.9 miles",
-    phone: "(555) 567-8901",
+    
+    phone: "+91 7654321098",
     availability: "Available Tomorrow",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa",
+    // image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa",
   },
   {
     id: 6,
-    name: "Dr. Robert Davis",
+    name: "Dr. Rahul Verma",
     specialty: "Neurologist",
     rating: 4.9,
     experience: "22 years",
     location: "Brain & Spine Institute",
-    distance: "5.1 miles",
-    phone: "(555) 678-9012",
+   
+    phone: "+91 9876543210",
     availability: "Next Available: Next Week",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Robert",
+    // image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Robert",
   },
 ];
 
@@ -107,8 +105,7 @@ const FindDoctor = () => {
 
   const filteredDoctors = doctors.filter((doctor) => {
     const matchesSpecialty =
-      selectedSpecialty === "all" ||
-      doctor.specialty === selectedSpecialty;
+      selectedSpecialty === "all" || doctor.specialty === selectedSpecialty;
     const matchesSearch =
       doctor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       doctor.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -152,7 +149,9 @@ const FindDoctor = () => {
                     {specialties.map((specialty) => (
                       <option
                         key={specialty}
-                        value={specialty === "All Specialties" ? "all" : specialty}
+                        value={
+                          specialty === "All Specialties" ? "all" : specialty
+                        }
                       >
                         {specialty}
                       </option>
@@ -172,18 +171,14 @@ const FindDoctor = () => {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex items-start space-x-4 mb-4">
-                  <div className="w-16 h-16 rounded-full overflow-hidden bg-secondary flex-shrink-0">
-                    <img
-                      src={doctor.image}
-                      alt={doctor.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+               
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold text-foreground">
                       {doctor.name}
                     </h3>
-                    <p className="text-primary font-medium">{doctor.specialty}</p>
+                    <p className="text-primary font-medium">
+                      {doctor.specialty}
+                    </p>
                     <div className="flex items-center mt-1">
                       <Star className="h-4 w-4 text-warning fill-warning" />
                       <span className="ml-1 text-sm font-medium">
@@ -200,7 +195,9 @@ const FindDoctor = () => {
                   <div className="flex items-center text-sm text-muted-foreground">
                     <MapPin className="h-4 w-4 mr-2 text-primary" />
                     <span>{doctor.location}</span>
-                    <span className="ml-auto font-medium">{doctor.distance}</span>
+                    <span className="ml-auto font-medium">
+                      {doctor.distance}
+                    </span>
                   </div>
                   <div className="flex items-center text-sm text-muted-foreground">
                     <Phone className="h-4 w-4 mr-2 text-primary" />
@@ -221,11 +218,16 @@ const FindDoctor = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button className="btn-healthcare flex-1">
+                  <Button
+                    className="btn-healthcare flex-1"
+                    onClick={() =>
+                      alert(`Booking appointment with ${doctor.name}`)
+                    }
+                  >
                     Book Appointment
                     <ChevronRight className="ml-1 h-4 w-4" />
                   </Button>
-                  <Button variant="outline" className="flex-1">
+                  <Button variant="outline" className="flex-1 "onClick={() => alert(`Viewing profile of ${doctor.name} `)}>
                     View Profile
                     <User className="ml-1 h-4 w-4" />
                   </Button>
@@ -249,6 +251,33 @@ const FindDoctor = () => {
               </div>
             </Card>
           )}
+        </div>
+      </div>
+      <div className="mt-10 flex justify-center">
+        <div className="bg-white dark:bg-gray-900 shadow-md rounded-lg p-6 max-w-md text-center border border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl font-semibold mb-3 text-gray-900 dark:text-white">
+            Need More Options?
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
+            To connect with more doctors and specialists, visit{" "}
+            <a
+              href="https://www.practo.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
+            >
+              Practo
+            </a>
+            .
+          </p>
+          <a
+            href="https://www.practo.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition"
+          >
+            Visit Practo
+          </a>
         </div>
       </div>
     </div>

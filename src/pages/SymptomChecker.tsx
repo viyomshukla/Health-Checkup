@@ -207,18 +207,7 @@ const SymptomChecker = () => {
                 </div>
 
                 {/* Backend Status Info */}
-                <div className="mt-6 p-4 bg-secondary rounded-lg">
-                  <div className="flex items-start gap-2">
-                    <Info className="h-5 w-5 text-primary mt-0.5" />
-                    <div className="text-sm">
-                      <p className="font-medium text-foreground mb-1">Flask Backend Required</p>
-                      <p className="text-muted-foreground">
-                        This symptom checker connects to a Flask ML backend. 
-                        Ensure your Flask server is running on port 5000.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+           
               </Card>
             </div>
 
@@ -269,10 +258,7 @@ const SymptomChecker = () => {
                     )}
                     
                     <div>
-                      <h3 className="text-lg font-semibold mb-3 text-foreground">
-                        {result.disease === "Backend Not Connected" ? "Setup Instructions:" : "Description:"}
-                      </h3>
-                      <p className="text-muted-foreground">{result.description}</p>
+                     
                     </div>
                     
                     <div>
@@ -291,10 +277,10 @@ const SymptomChecker = () => {
                     
                     {result.disease !== "Backend Not Connected" && (
                       <div className="bg-warning-light border border-warning/20 rounded-lg p-4">
-                        <p className="text-sm text-healthcare-dark">
+                        {/* <p className="text-sm text-healthcare-dark">
                           <strong>Medical Disclaimer:</strong> This is an AI-based preliminary analysis. 
                           Always consult with a qualified healthcare provider for accurate diagnosis and treatment.
-                        </p>
+                        </p> */}
                       </div>
                     )}
                   </div>
