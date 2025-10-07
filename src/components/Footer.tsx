@@ -3,7 +3,8 @@ const Footer = () => {
     <footer className="bg-secondary mt-auto">
       <div className="container mx-auto px-4 py-6">
         <div className="text-center text-muted-foreground">
-          © Made with ❤️ 
+          &copy; {new Date().getFullYear()} Health Checkup. All rights reserved.
+          
         </div>
       </div>
     </footer>
