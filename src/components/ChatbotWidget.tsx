@@ -119,7 +119,7 @@ const ChatbotWidget = () => {
 
     setIsLoading(true);
     try {
-      const res = await fetch("https://health-checkup-4.onrender.com/chatbot", {
+      const res = await fetch("https://health-checkup-3.onrender.com/chatbot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
