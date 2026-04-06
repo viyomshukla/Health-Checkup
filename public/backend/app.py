@@ -13,12 +13,14 @@ load_dotenv()
 
 # ---- Configure Groq ----
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+print(f"DEBUG: GROQ_API_KEY found = {bool(GROQ_API_KEY)}")
+print(f"DEBUG: Key starts with = {GROQ_API_KEY[:10] if GROQ_API_KEY else 'EMPTY'}")
 groq_client = None
 if GROQ_API_KEY:
     groq_client = Groq(api_key=GROQ_API_KEY)
     print("✅ Groq API configured successfully")
 else:
-    print("⚠️  GROQ_API_KEY not found in .env")
+    print("⚠️  GROQ_API_KEY not found")
 
 app = Flask(__name__)
 CORS(app)
