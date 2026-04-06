@@ -117,7 +117,7 @@ const Chatbot = () => {
 
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/chatbot", {
+      const res = await fetch("https://health-checkup-3.onrender.com/chatbot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ symptoms: selectedSymptoms }),
