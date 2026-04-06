@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import SymptomChecker from "./pages/SymptomChecker";
 import FindDoctor from "./pages/FindDoctor";
 import NotFound from "./pages/NotFound";
+import ChatbotWidget from "./components/ChatbotWidget";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
             </Routes>
           </main>
           <Footer />
+          <ChatbotWidget />
         </div>
       </BrowserRouter>
     </TooltipProvider>
